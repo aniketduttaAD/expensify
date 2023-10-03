@@ -1,0 +1,14 @@
+{
+  "name": "expensify",
+  "version": "1.0.0",
+  "description": "Expense Manager",
+  "scripts": {
+    "postinstall": "cd server && npm install && cd ../client && npm install",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  }
+}

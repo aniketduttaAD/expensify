@@ -1,0 +1,11 @@
+.custom-date-picker input {
+  height: 35px; 
+}
+.chakra-ui-dark .react-calendar{
+    background: #000;
+}
+
+.chakra-ui-dark 
+.react-date-picker__button svg{
+    background: gainsboro;
+}
