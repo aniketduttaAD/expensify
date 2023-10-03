@@ -205,6 +205,7 @@ export default function Authentication() {
                     onClick={() => setShowPassword(!showPassword)}
                     variant='ghost'
                     ml='-40px'
+                    style={{ zIndex: 1 }}
                   />
                 </Flex>
                 <p style={{ color: "red" }}>{errors.password?.message}</p>
