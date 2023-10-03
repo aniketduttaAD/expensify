@@ -30,36 +30,19 @@ function ExpenseChart() {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/fetch-data/${userData.username}`
       );
-      const categoryResults = [];
-      for (const category in data) {
-        const categoryData = data[category];
-        let totalCredit = 0;
-        let totalDebit = 0;
-        if (categoryData["Credit"]) {
-          totalCredit = categoryData["Credit"][0];
-        }
-        if (categoryData["Debit"]) {
-          totalDebit = categoryData["Debit"].reduce((acc, val) => acc + val, 0);
-        }
-        const amount = Math.abs(totalCredit - totalDebit);
-        categoryResults.push({
-          amount: amount,
-          category: category,
-        });
-      }
-      if (categoryResults) {
+      if (data && data.length > 0) {
         const newData = [
           ["Category", "Amount"],
-          ...categoryResults.map((categoryResult) => [
+          ...data.map((categoryResult) => [
             categoryResult.category,
             categoryResult.amount,
           ]),
         ];
         setChartData(newData);
-        setTotal(newData);
+        setTotal(data);
       }
     } catch (error) {
-    NotificationManager.error("Error message", error.message);
+      NotificationManager.error("Error message", error.message);
     } finally {
       setLoading(false);
       setIsModalOpen(true);
@@ -71,19 +54,14 @@ function ExpenseChart() {
   };
 
   const renderTotalData = () => {
-    if (total && total.length > 1) {
-      const totalMap = total.slice(1).reduce((acc, [category, amount]) => {
-        acc[category] = amount;
-        return acc;
-      }, {});
-
+    if (total && total.length > 0) {
       return (
         <div>
           <strong>Total:</strong>
           <ul>
-            {Object.entries(totalMap).map(([category, amount]) => (
-              <li key={category}>
-                {category}: ₹{amount}
+            {total.map((categoryResult) => (
+              <li key={categoryResult.category}>
+                {categoryResult.category}: ₹{categoryResult.amount}
               </li>
             ))}
           </ul>

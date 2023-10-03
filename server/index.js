@@ -120,31 +120,42 @@ app.get("/fetch-data/:username", async (req, res) => {
       spreadsheetId: sheet_id,
       range: `${username}!E2:E`,
     });
-    const amountData = amountResponse.data.values.map(Number);
     const categoryData = categoryResponse.data.values.map(String);
+    const amountData = amountResponse.data.values.map(Number);
     const typeData = typeResponse.data.values.map(String);
     const data = {};
     for (let i = 0; i < categoryData.length; i++) {
-      const amount = parseFloat(amountData[i]);
       const category = categoryData[i];
+      const amount = amountData[i];
       const type = typeData[i];
       if (!category || isNaN(amount) || amount === 0) {
         continue;
       }
       if (!data[category]) {
-        data[category] = {};
+        data[category] = { credit: 0, debit: 0 };
       }
-      if (!data[category][type]) {
-        data[category][type] = [];
+      if (type === "Credit") {
+        data[category].credit += amount;
+      } else if (type === "Debit") {
+        data[category].debit += amount;
       }
-      data[category][type].push(amount);
     }
-    res.json(data);
+    const categoryResults = [];
+    for (const category in data) {
+      const { credit, debit } = data[category];
+      const amount = Math.abs(credit - debit);
+      categoryResults.push({
+        amount: amount,
+        category: category,
+      });
+    }
+    res.json(categoryResults);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 //push data
 app.post("/sheets/:username", async (req, res) => {
